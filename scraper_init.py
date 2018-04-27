@@ -26,6 +26,10 @@ def plot_word_freq(url):
 
     # Get the text out of the soup: text
     text = soup.get_text()
+
+    # Re-encode the string so as to retain only the ASCII characters (and ignore the others)
+    # and then decode again
+    text = text.encode('ascii', 'ignore').decode('ascii')
     
     # Create tokenizer: tokenizer
     tokenizer = RegexpTokenizer('\w+')
