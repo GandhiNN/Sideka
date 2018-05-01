@@ -57,12 +57,16 @@ def plot_word_freq(url):
             
     # Create freq dist and plot
     freqdist1 = nltk.FreqDist(words_ns)
-    freqdist1.plot(25)
+    
+    # <!-- comment out plotting function first -->
+    #freqdist1.plot(25)
+
+    return text
 
 # Define URL 
 url_desa = 'http://tohe.desa.id/2018/04/27/siswa-siswi-smpn-satap-wetear-sukses-akhiri-ujian-nasional-hari-ini-dengan-seragam-dan-kain-tenun/'
 
 # Plot word frequency
-plot_word_freq(url_desa)
-
+html_source = plot_word_freq(url_desa)
+print(html_source)
 

@@ -1,0 +1,13 @@
+# 1 May 2018
+
+Modify Sideka() class method to :
+- better capturing "desa" URLs
+
+Table content is dynamically loaded by JS, 
+inspected elements only show what is currently displayed on our browser
+- is there a way to capture ALL elements of a dynamically loaded web?
+
+Create a Desa() class to which has the following class methods :
+- visit each Desa's URLs
+- visit the top 3 news articles
+- get the web content, and do NLP on each
