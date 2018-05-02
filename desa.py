@@ -1,4 +1,4 @@
-#!/usr/bin/env python4
+#!/usr/bin/env python3
 
 """
 Sample isolated crawler for
