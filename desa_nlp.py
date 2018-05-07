@@ -6,6 +6,7 @@ import nltk
 import operator
 import csv
 import argparse
+import os
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from collections import Counter
@@ -41,7 +42,8 @@ source_dir = desa + '_articles/'
 ## Load all articles, and clean it as much as we can
 
 # Load the news articles: articles
-file_list = glob.glob(source_dir + '*.txt')
+#file_list = glob.glob(source_dir + '*.txt')
+file_list = sorted(glob.glob(source_dir + '/*.txt'), key=os.path.getmtime)
 articles = [open(f, 'r').read() for f in file_list]
 
 # Preprocess articles: lowercasing and tokenizing all words
@@ -139,7 +141,7 @@ for i in range(len(articles_cleaned)):
     #for term_id, weight in sorted_tfidf_weights[:5]:
     for term_id, weight in sorted_tfidf_weights:
         #tfidf_tuples.append((dictionary.get(term_id), weight))
-        tfidf_tuples.append((dictionary.get(term_id), term_id, weight, 'corpus_{}'.format(i)))
+        tfidf_tuples.append((dictionary.get(term_id), term_id, weight, 'corpus_{}'.format(i+1)))
 
 # Sort the tfidif_tuples based on weight
 #tfidf_tuples.sort(key=operator.itemgetter(1), reverse=True)
