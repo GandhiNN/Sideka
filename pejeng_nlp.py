@@ -3,6 +3,7 @@
 # Import required packages
 import glob
 import nltk
+import operator
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from collections import Counter
@@ -95,3 +96,25 @@ print('Top 5 Weighted Words for corpus[1]')
 print('-----' * 8)
 for term_id, weight in sorted_tfidf_weights[:5]:
 	print(dictionary.get(term_id), weight)
+
+# Get the TFIDF Weights of all terms found in corpus
+#  print as list of tuples, in descending order 
+print('\n')
+
+# Create a container for the list of tuples: tfidf_tuples
+tfidf_tuples = []
+
+# Loop over the cleaned articles
+for i in range(len(articles_cleaned)):
+	doc = corpus[i]
+	tfidf_weights = tfidf[doc]
+	sorted_tfidf_weights = sorted(tfidf_weights, key=lambda w: w[1], reverse=True)
+	for term_id, weight in sorted_tfidf_weights:
+		tfidf_tuples.append((dictionary.get(term_id), weight))
+
+# Sort the tfidif_tuples based on weight
+tfidf_tuples.sort(key=operator.itemgetter(1), reverse=True)
+print('-----' * 8)
+print('Term and Weight for entire corpora')
+print('-----' * 8)
+pprint(tfidf_tuples)
