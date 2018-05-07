@@ -14,6 +14,9 @@ from pprint import pprint
 ## PREPROCESS Corpora
 ## Load all articles, and clean it as much as we can
 
+# Define website url: url
+url = 'http://www.pejeng.desa.id/post/'
+
 # Load 'scraped' article body
 source_dir = 'pejeng_articles/'
 
@@ -112,7 +115,8 @@ for i in range(len(articles_cleaned)):
     tfidf_weights = tfidf[doc]
     sorted_tfidf_weights = sorted(tfidf_weights, key=lambda w: w[1], reverse=True)
     for term_id, weight in sorted_tfidf_weights[:5]:
-        tfidf_tuples.append((dictionary.get(term_id), weight))
+        #tfidf_tuples.append((dictionary.get(term_id), weight))
+        tfidf_tuples.append((dictionary.get(term_id), term_id, weight, 'corpus_{}'.format(i)))
 
 # Sort the tfidif_tuples based on weight
 tfidf_tuples.sort(key=operator.itemgetter(1), reverse=True)
@@ -124,6 +128,7 @@ pprint(tfidf_tuples)
 # Write results to csv
 with open('tfidf_pejeng.csv', 'w') as f_out:
     csv_out = csv.writer(f_out)
+    csv_out.writerow(['# TF-IDF Weighting From {}'.format(url)])
     csv_out.writerow(['term', 'term_id', 'weight', 'corpus_id'])
     for row in tfidf_tuples:
         csv_out.writerow(row)
