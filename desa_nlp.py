@@ -14,8 +14,12 @@ from pprint import pprint
 ## PREPROCESS Corpora
 ## Load all articles, and clean it as much as we can
 
-# Define website url: url
-url = 'http://www.pejeng.desa.id/post/'
+# Define website url dictionary: url
+#url = 'http://www.pejeng.desa.id/post/'
+url = {'pejeng': 'http://www.pejeng.desa.id/post/',
+       'srinanti': 'http://srinanti.desa.id/kategori/kabar/',
+       'wonosari': 'http://wonosari.desa.id/kategori/kabar/',
+       ''}
 
 # Load 'scraped' article body
 source_dir = 'pejeng_articles/'
