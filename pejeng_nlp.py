@@ -4,6 +4,7 @@
 import glob
 import nltk
 import operator
+import csv
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from collections import Counter
@@ -22,22 +23,22 @@ articles = [open(f, 'r').read() for f in file_list]
 
 # Preprocess articles: lowercasing and tokenizing all words
 articles_lower_tokenize = [word_tokenize(t.lower())
-						   for t in articles]
+                           for t in articles]
 
 # Preprocess articles: removing 'indonesian' stopwords: articles_no_stop
 stopwords_indonesian = stopwords.words('indonesian')
 articles_no_stop = [[t for t in sublist if t not in stopwords_indonesian]
-					for sublist in articles_lower_tokenize]
+                    for sublist in articles_lower_tokenize]
 
 # Preprocess articles: removing punctuation
 articles_no_empty = [[t for t in sublist if t]
-					 for sublist in articles_no_stop]
+                     for sublist in articles_no_stop]
 articles_no_empty_intermediate_1 = [[t for t in sublist if '``' not in t]
-								    for sublist in articles_no_empty]
+                                    for sublist in articles_no_empty]
 articles_no_empty_intermediate_2 = [[t for t in sublist if '\'\'' not in t]
-									for sublist in articles_no_empty_intermediate_1]
+                                    for sublist in articles_no_empty_intermediate_1]
 articles_cleaned = [[t for t in sublist if t not in punctuation]
-					for sublist in articles_no_empty_intermediate_2]
+                    for sublist in articles_no_empty_intermediate_2]
 print(len(articles_cleaned))
 
 ## Simple BAG-OF-WORDS Model
@@ -95,7 +96,7 @@ print('-----' * 8)
 print('Top 5 Weighted Words for corpus[1]')
 print('-----' * 8)
 for term_id, weight in sorted_tfidf_weights[:5]:
-	print(dictionary.get(term_id), weight)
+    print(dictionary.get(term_id), weight)
 
 # Get the TFIDF Weights of all terms found in corpus
 #  print as list of tuples, in descending order 
@@ -105,12 +106,13 @@ print('\n')
 tfidf_tuples = []
 
 # Loop over the cleaned articles
+# Get the top-5 of tfidf weight
 for i in range(len(articles_cleaned)):
-	doc = corpus[i]
-	tfidf_weights = tfidf[doc]
-	sorted_tfidf_weights = sorted(tfidf_weights, key=lambda w: w[1], reverse=True)
-	for term_id, weight in sorted_tfidf_weights:
-		tfidf_tuples.append((dictionary.get(term_id), weight))
+    doc = corpus[i]
+    tfidf_weights = tfidf[doc]
+    sorted_tfidf_weights = sorted(tfidf_weights, key=lambda w: w[1], reverse=True)
+    for term_id, weight in sorted_tfidf_weights[:5]:
+        tfidf_tuples.append((dictionary.get(term_id), weight))
 
 # Sort the tfidif_tuples based on weight
 tfidf_tuples.sort(key=operator.itemgetter(1), reverse=True)
@@ -118,3 +120,10 @@ print('-----' * 8)
 print('Term and Weight for entire corpora')
 print('-----' * 8)
 pprint(tfidf_tuples)
+
+# Write results to csv
+with open('tfidf_pejeng.csv', 'w') as f_out:
+    csv_out = csv.writer(f_out)
+    csv_out.writerow(['term', 'term_id', 'weight', 'corpus_id'])
+    for row in tfidf_tuples:
+        csv_out.writerow(row)
