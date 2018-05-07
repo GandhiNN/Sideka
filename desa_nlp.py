@@ -5,24 +5,40 @@ import glob
 import nltk
 import operator
 import csv
+import argparse
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from collections import Counter
 from string import punctuation
 from pprint import pprint
 
-## PREPROCESS Corpora
-## Load all articles, and clean it as much as we can
+# Create a function to choose desa to be analysed
+def argument_list():
+    parser = argparse.ArgumentParser(description="Desa NLP Analyzer")
+    parser.add_argument("-d", "--desa", required=True,
+                        help="Pick your 'Desa' to be analyzed\n")
+    args = parser.parse_args()
+    desa = str(args.desa)
+    return desa
 
 # Define website url dictionary: url
 #url = 'http://www.pejeng.desa.id/post/'
 url = {'pejeng': 'http://www.pejeng.desa.id/post/',
        'srinanti': 'http://srinanti.desa.id/kategori/kabar/',
        'wonosari': 'http://wonosari.desa.id/kategori/kabar/',
-       ''}
+       'kertarahayu': 'http://kertarahayu.desa.id/kategori/kabar/',
+       'banyuresmi': 'http://banyuresmi.desa.id/kategori/kabar/'
+       }
+
+desa = argument_list()
+
+url_desa = url[desa]
 
 # Load 'scraped' article body
-source_dir = 'pejeng_articles/'
+source_dir = desa + '_articles/'
+
+## PREPROCESS Corpora
+## Load all articles, and clean it as much as we can
 
 # Load the news articles: articles
 file_list = glob.glob(source_dir + '*.txt')
@@ -130,9 +146,11 @@ print('-----' * 8)
 pprint(tfidf_tuples)
 
 # Write results to csv
-with open('tfidf_pejeng.csv', 'w') as f_out:
+desa_csv = 'tf_idf_{}.csv'.format(desa)
+
+with open(desa_csv, 'w') as f_out:
     csv_out = csv.writer(f_out)
-    csv_out.writerow(['# TF-IDF Weighting From {}'.format(url)])
+    csv_out.writerow(['# TF-IDF Weighting From {}'.format(url_desa)])
     csv_out.writerow(['term', 'term_id', 'weight', 'corpus_id'])
     for row in tfidf_tuples:
         csv_out.writerow(row)
