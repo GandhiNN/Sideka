@@ -63,6 +63,7 @@ articles_no_empty_intermediate_2 = [[t for t in sublist if '\'\'' not in t]
 articles_cleaned = [[t for t in sublist if t not in punctuation]
                     for sublist in articles_no_empty_intermediate_2]
 print(len(articles_cleaned))
+#print(articles_cleaned[34])
 
 ## Simple BAG-OF-WORDS Model
 ## Looking up top 5 most-common words in the corpora
@@ -134,12 +135,16 @@ for i in range(len(articles_cleaned)):
     doc = corpus[i]
     tfidf_weights = tfidf[doc]
     sorted_tfidf_weights = sorted(tfidf_weights, key=lambda w: w[1], reverse=True)
-    for term_id, weight in sorted_tfidf_weights[:5]:
+    #sorted_tfidf_weights = sorted(tfidf_weights, key=lambda w: w[1])
+    #for term_id, weight in sorted_tfidf_weights[:5]:
+    for term_id, weight in sorted_tfidf_weights:
         #tfidf_tuples.append((dictionary.get(term_id), weight))
         tfidf_tuples.append((dictionary.get(term_id), term_id, weight, 'corpus_{}'.format(i)))
 
 # Sort the tfidif_tuples based on weight
-tfidf_tuples.sort(key=operator.itemgetter(1), reverse=True)
+#tfidf_tuples.sort(key=operator.itemgetter(1), reverse=True)
+tfidf_tuples.sort(key=operator.itemgetter(0), reverse=True)
+tfidf_tuples.sort(key=operator.itemgetter(2), reverse=True)
 print('-----' * 8)
 print('Term and Weight for entire corpora')
 print('-----' * 8)
@@ -152,5 +157,11 @@ with open(desa_csv, 'w') as f_out:
     csv_out = csv.writer(f_out)
     csv_out.writerow(['# TF-IDF Weighting From {}'.format(url_desa)])
     csv_out.writerow(['term', 'term_id', 'weight', 'corpus_id'])
+    # Since we have already sorted the tfidf_tuples in descending order
+    #  duplicates should be not written to csv
+    seen = set()
     for row in tfidf_tuples:
+        if row[0] in seen:
+            continue
+        seen.add(row[0])
         csv_out.writerow(row)
