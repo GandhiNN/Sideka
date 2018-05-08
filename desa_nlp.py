@@ -13,6 +13,10 @@ from collections import Counter
 from string import punctuation
 from pprint import pprint
 
+# Import Dictionary, TfidfMode from gensim
+from gensim.corpora.dictionary import Dictionary
+from gensim.models.tfidfmodel import TfidfModel
+
 # Create a function to choose desa to be analysed
 def argument_list():
     parser = argparse.ArgumentParser(description="Desa NLP Analyzer")
@@ -32,17 +36,14 @@ url = {'pejeng': 'http://www.pejeng.desa.id/post/',
        }
 
 desa = argument_list()
-
 url_desa = url[desa]
 
 # Load 'scraped' article body
 source_dir = desa + '_articles/'
 
 ## PREPROCESS Corpora
-## Load all articles, and clean it as much as we can
-
-# Load the news articles: articles
-#file_list = glob.glob(source_dir + '*.txt')
+## Load all articles, and clean it
+# Load the news articles, sorted by last modification time: articles
 file_list = sorted(glob.glob(source_dir + '/*.txt'), key=os.path.getmtime)
 articles = [open(f, 'r').read() for f in file_list]
 
@@ -69,7 +70,6 @@ print(len(articles_cleaned))
 
 ## Simple BAG-OF-WORDS Model
 ## Looking up top 5 most-common words in the corpora
-
 # Create a counter object: counter
 counter = Counter([word for words in articles_cleaned for word in set(words)])
 print('-----' * 8)
@@ -79,16 +79,11 @@ print(counter.most_common(10), '\n')
 
 ## TF-IDF Using Gensim
 # Create a gensim corpus and then apply Tfidf to that corpus
-from gensim.corpora.dictionary import Dictionary
-
 # Create a (gensim) dictionary object from the articles_cleaned: dictionary
 dictionary = Dictionary(articles_cleaned)
 
 # Create a gensim corpus
 corpus = [dictionary.doc2bow(article) for article in articles_cleaned]
-
-# Import TfidfModel from gensim
-from gensim.models.tfidfmodel import TfidfModel
 
 # Create a tfidf object from corpus
 tfidf = TfidfModel(corpus)
